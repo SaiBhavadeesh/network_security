@@ -31,3 +31,26 @@ def write_yaml_file(file_path: str, content: object, replace: bool = False) -> N
             yaml.dump(content, file)
     except Exception as e:
         raise NetworkSecurityException(e, sys)  # type: ignore
+
+
+def save_numpy_array_data(file_path: str, array: np.ndarray) -> None:
+    """
+    Saves a NumPy array to a file.
+    """
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "wb") as file_obj:
+            np.save(file_obj, array)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)  # type: ignore
+
+def save_object(file_path: str, obj: object) -> None:
+    """
+    Saves an object to a file using dill.
+    """
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "wb") as file_obj:
+            pickle.dump(obj, file_obj)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)  # type: ignore

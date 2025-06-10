@@ -8,10 +8,6 @@ class DataIngestionArtifact:
     train_file_path: str
     test_file_path: str
 
-    def __post_init__(self):
-        # You can add any additional initialization logic here if needed
-        pass
-
 @dataclass
 class DataValidationArtifact:
     """
@@ -24,6 +20,11 @@ class DataValidationArtifact:
     invalid_test_file_path: str | None
     drift_report_file_path: str
 
-    def __post_init__(self):
-        # You can add any additional initialization logic here if needed
-        pass
+@dataclass
+class DataTransformationArtifact:
+    """
+    Data Transformation Artifact class to hold the artifacts related to data transformation.
+    """
+    transformed_train_file_path: str
+    transformed_test_file_path: str
+    transformed_object_file_path: str
