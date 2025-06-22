@@ -79,7 +79,7 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
             "table.html", {"request": request, "table": table_html}
         )
     except Exception as e:
-        raise NetworkSecurityException(e, sys)  # type: ignore
+        raise NetworkSecurityException(e, sys) # type: ignore
 
 
 if __name__ == "__main__":
