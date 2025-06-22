@@ -40,7 +40,7 @@ class DataTransformation:
         """
         It initialises KNNImputer object with the parameters specified in the training_pipeline.py file
         and returns a Pipeline object with the KNNImputer object as the first step.
-        
+
         Returns:
             A pipeline object
         """
@@ -110,6 +110,9 @@ class DataTransformation:
                 self.data_transformation_config.transformed_object_file_path,
                 obj=preprocessor_obj,
             )
+
+            ## Save preprocessing file
+            save_object("models/preprocessing.pkl", preprocessor_obj)
 
             ## Preparing artifcat
             return DataTransformationArtifact(

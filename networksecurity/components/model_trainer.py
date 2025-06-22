@@ -1,5 +1,6 @@
 import os, sys
 import mlflow
+import dagshub
 from networksecurity.logging.logger import logging
 from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.entity.artifact import (
@@ -27,19 +28,21 @@ from sklearn.ensemble import (
     RandomForestClassifier,
 )
 
+dagshub.init(repo_owner="saibhavadeesh", repo_name="network_security", mlflow=True)  # type: ignore
+
 
 class ModelTrainer:
     def __init__(
         self,
-        model_trainer_config: ModelTrainerConfig,
         data_transformation_artifact: DataTransformationArtifact,
+        model_trainer_config: ModelTrainerConfig,
     ) -> None:
         try:
             self.model_trainer_config = model_trainer_config
             self.data_transformation_artifact = data_transformation_artifact
         except Exception as e:
-            raise NetworkSecurityException(e, sys) # type: ignore
-        
+            raise NetworkSecurityException(e, sys)  # type: ignore
+
     def track_mlflow(self, best_model, classification_metric):
         try:
             with mlflow.start_run():
@@ -50,10 +53,10 @@ class ModelTrainer:
                 mlflow.log_metric("f1_score", f1_score)
                 mlflow.log_metric("precision_score", precision_score)
                 mlflow.log_metric("recall_score", recall_score)
-
-                mlflow.sklearn.log_model(best_model, "model") # type: ignore
+ 
+                # mlflow.sklearn.log_model(best_model, "model")  # type: ignore
         except Exception as e:
-            raise NetworkSecurityException(e, sys) # type: ignore
+            raise NetworkSecurityException(e, sys)  # type: ignore
 
     def train_model(self, X_train, y_train, X_test, y_test) -> ModelTrainerArtifact:
         models = {
@@ -97,7 +100,7 @@ class ModelTrainer:
         ]
         best_model = models[best_model_name]
 
-        y_train_pred = best_model.predict(X_train)        
+        y_train_pred = best_model.predict(X_train)
         classification_train_metric = get_classification_score(
             y_true=y_train, y_pred=y_train_pred
         )
@@ -123,7 +126,12 @@ class ModelTrainer:
         os.makedirs(model_dir_path, exist_ok=True)
 
         network_model = NetworkModel(preprocessor=preprocessor, model=best_model)
-        save_object(self.model_trainer_config.trained_model_file_path, obj=network_model)
+        save_object(
+            self.model_trainer_config.trained_model_file_path, obj=network_model
+        )
+
+        ## Save final model
+        save_object("models/model.pkl", best_model)
 
         ## Model Trainer Artifact
         model_trainer_artifact = ModelTrainerArtifact(
