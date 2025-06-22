@@ -1,0 +1,6 @@
+.venv/
+logs/
+__pycache__/
+Artifacts/
+mlruns/
+models/
